@@ -41,25 +41,31 @@ export function inspectImage(bytes) {
     type = 'image/webp';
     if (view.getUint32(4,true) + 8 !== bytes.length) throw new Error('WebP 长度无效。');
     const u24 = offset => bytes[offset] | bytes[offset+1] << 8 | bytes[offset+2] << 16;
-    let offset = 12;
+    let offset = 12, frameWidth, frameHeight, extended = false;
     while (offset + 8 <= bytes.length) {
       const kind = ascii(offset,4), size = view.getUint32(offset+4,true), start = offset + 8;
       if (start + size > bytes.length) throw new Error('WebP 数据截断。');
       if (kind === 'ANIM' || kind === 'ANMF' || kind === 'VP8X' && (bytes[start] & 2)) throw new Error('首版不支持动画 WebP。');
       if (kind === 'VP8X') {
-        if (size !== 10) throw new Error('WebP 头无效。');
+        if (size !== 10 || extended || offset !== 12) throw new Error('WebP 头无效。');
+        extended = true;
         width = u24(start+4) + 1; height = u24(start+7) + 1;
-      } else if (kind === 'VP8 ' && width === undefined) {
+      } else if (kind === 'VP8 ') {
+        if (frameWidth !== undefined) throw new Error('WebP 帧重复。');
         if (size < 10 || ascii(start+3,3) !== '\u009d\u0001\u002a') throw new Error('WebP 帧无效。');
-        width = view.getUint16(start+6,true) & 0x3fff; height = view.getUint16(start+8,true) & 0x3fff;
-      } else if (kind === 'VP8L' && width === undefined) {
+        frameWidth = view.getUint16(start+6,true) & 0x3fff; frameHeight = view.getUint16(start+8,true) & 0x3fff;
+      } else if (kind === 'VP8L') {
+        if (frameWidth !== undefined) throw new Error('WebP 帧重复。');
         if (size < 5 || bytes[start] !== 0x2f) throw new Error('WebP 无损帧无效。');
         const bits = view.getUint32(start+1,true);
-        width = (bits & 0x3fff) + 1; height = (bits >>> 14 & 0x3fff) + 1;
+        frameWidth = (bits & 0x3fff) + 1; frameHeight = (bits >>> 14 & 0x3fff) + 1;
       }
       offset = start + size + (size % 2);
     }
     if (offset !== bytes.length) throw new Error('WebP 尾部数据无效。');
+    if (frameWidth === undefined) throw new Error('WebP 缺少图片帧。');
+    if (extended && (width !== frameWidth || height !== frameHeight)) throw new Error('WebP 画布与图片帧尺寸不匹配。');
+    width = frameWidth; height = frameHeight;
   } else throw new Error('仅支持 JPEG、PNG、静态 WebP；不支持 SVG/GIF。');
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || width * height > LIMITS.pixels) throw new Error('图片尺寸无效或超过 1600 万像素。');
   return { type, width, height };

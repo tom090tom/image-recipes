@@ -67,7 +67,7 @@ const archive = createZip([{ name: 'example.txt', data: new TextEncoder().encode
 // Uint8Array；图片处理模块需要浏览器环境，首版无图片处理 CLI。
 ```
 
-本地验证：Windows / Node.js 24.20.0，35 项自动测试与语法检查通过；实际浏览器验证示例、9 个结果、ZIP、格式/尺寸、透明背景和配方保存。ZIP 另由 Python 标准库与 Pillow 解码核对 CRC、图片尺寸和格式。未验证的平台不宣称支持。
+本地验证：Windows / Node.js 24.20.0，36 项自动测试与语法检查通过；实际浏览器验证示例、9 个结果、ZIP、格式/尺寸、透明背景和配方保存。ZIP 另由 Python 标准库与 Pillow 解码核对 CRC、图片尺寸和格式。未验证的平台不宣称支持。
 
 CI 暂未启用：现有推送凭据没有 GitHub `workflow` 权限。[CI 模板](docs/ci-template.yml) 可在具备权限后移至 `.github/workflows/ci.yml` 并实际运行；当前必需状态检查留空。
 

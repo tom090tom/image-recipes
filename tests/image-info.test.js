@@ -30,3 +30,14 @@ test('rejects animated extended WebP and truncated chunk lengths', () => {
   bytes[20] = 0; bytes.writeUInt32LE(1000,16);
   assert.throws(() => inspectImage(bytes));
 });
+test('extended WebP must contain a real frame with matching dimensions', async () => {
+  const source = await sample('mark.webp');
+  const extended = Buffer.alloc(18);
+  extended.write('VP8X'); extended.writeUInt32LE(10,4);
+  const combined = Buffer.concat([source.subarray(0,12),extended,source.subarray(12)]);
+  combined.writeUInt32LE(combined.length-8,4);
+  assert.throws(() => inspectImage(combined), /尺寸|匹配/);
+  const headerOnly = combined.subarray(0,30);
+  headerOnly.writeUInt32LE(22,4);
+  assert.throws(() => inspectImage(headerOnly), /帧/);
+});
