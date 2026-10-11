@@ -1,0 +1,14 @@
+{
+  "name": "image-recipes",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local batch image exports with reusable recipes and ZIP download.",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node bin/server.js",
+    "test": "node --test",
+    "check": "node bin/check.js"
+  }
+}

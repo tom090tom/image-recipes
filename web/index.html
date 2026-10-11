@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="图片在本机批量缩放、转换格式、统一命名。保存配方，一次下载多种规格。">
+  <title>Image Recipes · 图片导出配方</title>
+  <link rel="stylesheet" href="/styles.css"><script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="wordmark" href="/">▧ Image Recipes</a><span class="local-badge"><span class="dot"></span> 本机处理 · 无需上传</span></header>
+  <main>
+    <section class="hero"><p class="eyebrow">ONE BATCH. EVERY SIZE.</p><h1>原图准备一次，<br>每个尺寸都备好。</h1><p class="intro">缩放、转换、命名，交给你的导出配方。<br>图片留在本机，下次发布直接复用。</p><div class="hero-tags"><span>保持比例</span><span>配方可复用</span><span>一键 ZIP</span></div><div class="hero-art" aria-hidden="true"><div class="art-card art-one">01<span>square</span></div><div class="art-card art-two">02<span>compact</span></div><div class="art-card art-three">03<span>cover</span></div></div></section>
+    <div id="status" class="notice" role="status" aria-live="polite">先加载示例，或选择你自己的图片。</div>
+    <div class="workspace">
+      <section class="panel source-panel"><div class="section-head"><div><p class="step">01 / 原图</p><h2>选一组图片</h2></div><button id="demo" class="button secondary" type="button">加载示例</button></div>
+        <label class="upload" for="files"><span class="upload-icon">＋</span><strong>选择图片</strong><span>JPEG · PNG · 静态 WebP</span><small>最多 20 张，单张 10 MiB，总计 50 MiB</small><input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+        <div class="source-summary"><span id="source-count">尚未选择图片</span><button id="clear" class="text-button" type="button">清空原图</button></div><div id="sources" class="source-grid"></div><ul id="input-errors" class="error-list"></ul>
+        <p class="hint">原图不会被覆盖。只接受静态图片，输入最多 1600 万像素。</p>
+      </section>
+      <section class="panel recipe-panel"><div class="section-head"><div><p class="step">02 / 配方</p><h2>每次都用的规格</h2></div><button id="add-variant" class="text-button" type="button">＋ 添加规格</button></div>
+        <label class="field recipe-name">配方名称<input id="recipe-name" maxlength="60" value="商品与社媒示例"></label>
+        <div id="variants"></div>
+        <p class="hint">保持比例居中留白，不裁切。JPEG 留白为白色，PNG / WebP 保留透明；PNG 不使用质量参数。尺寸为示例，请自行核对渠道要求。</p>
+        <div class="recipe-actions"><button id="save-recipe" class="button secondary" type="button">保存配方</button><button id="reset-recipe" class="text-button" type="button">恢复默认并清除保存</button><span id="saved-state" class="muted">仅保存规格，不保存图片</span></div>
+        <button id="generate" class="button primary generate" type="button" disabled>生成全部版本 →</button>
+      </section>
+    </div>
+    <section class="panel results-panel"><div class="section-head"><div><p class="step">03 / 导出</p><h2>准备好，就打包带走</h2></div><button id="download" class="button primary" type="button" disabled>下载 ZIP</button></div><p id="result-summary" class="muted">生成后查看实际尺寸、文件大小和超限提示。</p><progress id="progress" value="0" max="1" hidden aria-label="生成进度"></progress><ul id="export-errors" class="error-list"></ul><div id="results" class="results-grid"><div class="empty">你的导出结果会出现在这里。<span>先点「加载示例」，体验 3 张原图 × 3 种规格。</span></div></div></section>
+    <footer>v0.1.0 · MIT 开源。请确认素材使用权并保留原件，重新编码可能改变色彩和元数据。<a href="/DISCLAIMER.md" target="_blank" rel="noopener">使用与免责说明</a><a href="/SECURITY.md" target="_blank" rel="noopener">安全边界</a></footer>
+  </main>
+</body>
+</html>
