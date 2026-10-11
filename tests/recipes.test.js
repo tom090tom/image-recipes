@@ -32,14 +32,21 @@ test('invalid source dimensions fail instead of allocating a canvas', () => {
   for (const value of [0, -1, NaN, Infinity]) assert.throws(() => fitImage(value, 100, variant));
 });
 test('filenames preserve Unicode and leading zeros with deterministic collision-free indices', () => {
-  assert.equal(outputName('001 商品.png', '商品图', 1, 'webp'), '001 商品_001_商品图.webp');
+  assert.equal(outputName('001 商品.png', '商品图', 1, 'webp'), '001_001 商品_商品图.webp');
   assert.notEqual(outputName('a.png', 'x', 1, 'jpeg'), outputName('a.jpg', 'x', 2, 'jpeg'));
+});
+test('source index is the first filename component so source and label text cannot collide', () => {
+  const left = outputName('a.png', 'x_002_y', 1, 'jpeg');
+  const right = outputName('a_001_x.png', 'y', 2, 'jpeg');
+  assert.notEqual(left, right);
+  assert.match(left, /^001_/u);
+  assert.match(right, /^002_/u);
 });
 test('filenames neutralize paths, control characters and Windows device names', () => {
   const name = outputName('../CON.jpg', '..\\NUL\u0000', 1, 'jpeg');
   assert.doesNotMatch(name, /[<>:"/\\|?*\x00-\x1f\x7f]/u);
   assert.ok(!name.startsWith('.'));
-  assert.match(outputName('CON.jpg', 'x', 1, 'jpeg'), /^_CON/);
+  assert.match(outputName('CON.jpg', 'x', 1, 'jpeg'), /^001__CON/);
   assert.throws(() => outputName('a', 'b', 1, 'svg'));
 });
 test('batch bounds protect input memory before reading any files', () => {

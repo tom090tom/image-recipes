@@ -56,7 +56,7 @@ function safePart(value) {
 export function outputName(name, label, index, format) {
   if (!formats.has(format) || !Number.isInteger(index) || index < 1 || index > LIMITS.files) throw new Error('导出名称参数无效。');
   const base = safePart(String(name).replace(/\.[^.]*$/u, ''));
-  return `${base}_${String(index).padStart(3, '0')}_${safePart(label)}.${format === 'jpeg' ? 'jpg' : format}`;
+  return `${String(index).padStart(3, '0')}_${base}_${safePart(label)}.${format === 'jpeg' ? 'jpg' : format}`;
 }
 
 export function validateBatch(files) {
